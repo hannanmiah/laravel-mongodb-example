@@ -11,7 +11,7 @@ beforeEach(function (){
 });
 
 test('user can delete his own post', function () {
-    $response = $this->actingAs($this->user,'api')->deleteJson(route('posts.destroy', $this->post));
+    $response = $this->actingAs($this->user,'sanctum')->deleteJson(route('posts.destroy', $this->post));
 
     $response->assertStatus(204);
 

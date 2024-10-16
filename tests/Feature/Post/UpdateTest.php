@@ -19,7 +19,7 @@ beforeEach(function (){
 });
 
 test('user can update their own post', function () {
-    $response = $this->actingAs($this->user,'api')->putJson(route('posts.update', $this->post), $this->payload);
+    $response = $this->actingAs($this->user,'sanctum')->putJson(route('posts.update', $this->post), $this->payload);
     $response->assertOk();
 });
 

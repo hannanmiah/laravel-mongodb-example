@@ -17,7 +17,7 @@ beforeEach(function (){
 
 test('it creates a new post', function () {
     // send request as authenticated user
-    $res = $this->actingAs($this->user, 'api')->postJson(route('posts.store'),$this->payload);
+    $res = $this->actingAs($this->user, 'sanctum')->postJson(route('posts.store'),$this->payload);
     // assert status code
     $res->assertCreated();
     // assert json fragment
@@ -34,7 +34,7 @@ test('unauthenticated users cannot create posts', function () {
 test('it throws validation errors for non-existent category', function () {
     $this->payload['category_id'] = 999999;
     // send request as authenticated user
-    $res = $this->actingAs($this->user, 'api')->postJson(route('posts.store'), $this->payload);
+    $res = $this->actingAs($this->user, 'sanctum')->postJson(route('posts.store'), $this->payload);
     // assert status code
     $res->assertUnprocessable();
     // assert validation error

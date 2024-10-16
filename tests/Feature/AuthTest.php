@@ -42,3 +42,9 @@ test('authenticated user can log out', function () {
 
     $response->assertNoContent();
 });
+
+test('unauthenticated user can not log out', function () {
+    $response = $this->postJson(route('auth.logout'));
+
+    $response->assertUnauthorized();
+});

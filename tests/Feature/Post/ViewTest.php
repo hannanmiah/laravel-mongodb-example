@@ -13,5 +13,7 @@ beforeEach(function () {
 test('get a specific post', function () {
     $response = $this->getJson(route('posts.show', $this->post));
     $response->assertStatus(200);
-    $response->assertJsonStructure(['title', 'body', 'user_id', 'created_at', 'updated_at']);
+    $response->assertJsonStructure([
+        'data' => ['title', 'body', 'user_id', 'created_at', 'updated_at']
+    ]);
 });

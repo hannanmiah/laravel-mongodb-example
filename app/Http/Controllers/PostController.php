@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::paginate(10);
-        return $posts;
+        return PostResource::collection($posts);
     }
 
     public function store(Request $request)
@@ -44,7 +45,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
         $post->load('user');
-        return $post;
+        return PostResource::make($post);
     }
 
     public function destroy(Post $post)

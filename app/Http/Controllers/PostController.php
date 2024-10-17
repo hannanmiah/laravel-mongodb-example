@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -20,11 +21,20 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'body' => 'required',
             'category_id' => 'required|exists:categories,id',
+            'tags' => 'list|filled',
+            'tags.*' => 'string|max:255',
         ]);
 
         $data['user_id'] = $request->user()->id;
 
         $post = Post::create($data);
+
+        if ($request->filled('tags')) {
+            collect($request->input('tags',[]))->each(function ($tag) use ($post) {
+                $tag = Tag::firstOrCreate(['name' => $tag]);
+                $post->tags()->attach($tag);
+            });
+        }
 
         return response()->json($post, 201);
     }

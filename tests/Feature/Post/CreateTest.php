@@ -2,6 +2,7 @@
 
 
 use App\Models\Category;
+use App\Models\Post;
 use App\Models\User;
 
 beforeEach(function (){
@@ -39,4 +40,19 @@ test('it throws validation errors for non-existent category', function () {
     $res->assertUnprocessable();
     // assert validation error
     $res->assertJsonValidationErrors('category_id');
+});
+
+test('tags can be attached to a post', function () {
+    $tags = ['first-tag', 'second-tag'];
+    $this->payload['tags'] = $tags;
+    // send request as authenticated user
+    $res = $this->actingAs($this->user, 'sanctum')->postJson(route('posts.store'), $this->payload);
+    // assert status code
+    $res->assertCreated();
+    // assert database has the correct tags
+    $this->assertDatabaseHas('tags', ['name' => $tags[0]]);
+    // assert the post has the correct tags
+    $post = Post::find($res->json('id'));
+    // assert the post has the correct tags
+    $this->assertCount(2, $post->tags);
 });

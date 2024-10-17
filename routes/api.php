@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Post\CommentController;
+use App\Http\Controllers\Post\LikeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -10,9 +11,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 })->name('user.me');
 
 Route::prefix('auth')->name('auth.')->controller(AuthController::class)->group(function () {
-    Route::post('login','login')->name('login');
-    Route::post('logout','logout')->name('logout')->middleware('auth:sanctum');
-    Route::post('register','register')->name('register');
+    Route::post('login', 'login')->name('login');
+    Route::post('logout', 'logout')->name('logout')->middleware('auth:sanctum');
+    Route::post('register', 'register')->name('register');
 });
 
 Route::prefix('posts')->name('posts.')->group(function () {
@@ -22,13 +23,18 @@ Route::prefix('posts')->name('posts.')->group(function () {
     Route::put('/{post}', 'App\Http\Controllers\PostController@update')->name('update')->middleware('auth:sanctum');
     Route::delete('/{post}', 'App\Http\Controllers\PostController@destroy')->name('destroy')->middleware('auth:sanctum');
 
-    Route::prefix('{post}')->name('posts.show.')->group(function (){
-        Route::prefix('comments')->name('comments.')->controller(CommentController::class)->group(function (){
+    Route::prefix('{post}')->name('posts.show.')->group(function () {
+        Route::prefix('comments')->name('comments.')->controller(CommentController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store')->middleware('auth:sanctum');
             Route::get('/{comment}', 'show')->name('show');
             Route::put('/{comment}', 'update')->name('update')->middleware('auth:sanctum');
             Route::delete('/{comment}', 'destroy')->name('destroy')->middleware('auth:sanctum');
+        });
+
+        Route::prefix('likes')->name('likes.')->controller(LikeController::class)->group(function () {
+            Route::post('/', 'store')->name('store')->middleware('auth:sanctum');
+            Route::delete('/{like}', 'destroy')->name('destroy')->middleware('auth:sanctum');
         });
     });
 });

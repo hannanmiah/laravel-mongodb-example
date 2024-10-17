@@ -5,7 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\Laravel\Relations\BelongsTo;
+use MongoDB\Laravel\Relations\BelongsToMany;
+use MongoDB\Laravel\Relations\EmbedsMany;
 use MongoDB\Laravel\Relations\HasMany;
+use MongoDB\Laravel\Relations\MorphMany;
+use MongoDB\Laravel\Relations\MorphToMany;
 
 class Post extends Model
 {
@@ -32,5 +36,15 @@ class Post extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    public function likes(): MorphMany
+    {
+        return $this->morphMany(Like::class, 'likeable');
     }
 }

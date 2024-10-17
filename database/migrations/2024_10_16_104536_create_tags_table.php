@@ -17,12 +17,6 @@ return new class extends Migration
             $table->string('name');
             $table->timestamps();
         });
-
-        Schema::create('taggables', function (Blueprint $table) {
-            $table->foreignIdFor(Tag::class);
-            $table->morphs('taggable', 'taggable_type');
-            $table->unique(['tag_id', 'taggable_id', 'taggable_type']);
-        });
     }
 
     /**
@@ -31,6 +25,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('tags');
-        Schema::dropIfExists('taggables');
     }
 };

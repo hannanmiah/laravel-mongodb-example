@@ -27,3 +27,30 @@ test('un authenticated user cannot update a post', function () {
     $response = $this->putJson(route('posts.update', $this->post), $this->payload);
     $response->assertUnauthorized();
 });
+
+test('unauthorized user can not update someone post',function (){
+    $user = User::factory()->create();
+    $response = $this->actingAs($user,'sanctum')->putJson(route('posts.update', $this->post), $this->payload);
+    $response->assertForbidden();
+});
+
+test('Admin can update any post',function (){
+    $user = User::factory()->create();
+    $user->assignRole('Admin');
+    $response = $this->actingAs($user,'sanctum')->putJson(route('posts.update', $this->post), $this->payload);
+    $response->assertOk();
+});
+
+test('Editor can edit someone post',function (){
+    $user = User::factory()->create();
+    $user->assignRole('Editor');
+    $response = $this->actingAs($user,'sanctum')->putJson(route('posts.update', $this->post), $this->payload);
+    $response->assertOk();
+});
+
+test('User with other role can not edit someone post',function (){
+    $user = User::factory()->create();
+    $user->assignRole('Other role');
+    $response = $this->actingAs($user,'sanctum')->putJson(route('posts.update', $this->post), $this->payload);
+    $response->assertForbidden();
+});

@@ -6,6 +6,7 @@ use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -41,6 +42,8 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
+        Gate::authorize('update', $post);
+        // validate
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required',
@@ -60,6 +63,9 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
+        // authorize
+        Gate::authorize('delete',$post);
+
         $post->delete();
         return response()->json(null, 204);
     }

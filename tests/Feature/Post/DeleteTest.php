@@ -18,3 +18,26 @@ test('user can delete his own post', function () {
     // assert database missing the post
     $this->assertDatabaseMissing('posts', ['id' => $this->post->id]);
 });
+
+test('un authorized user can not delete someone post',function (){
+    $user = User::factory()->create();
+    $response = $this->actingAs($user,'sanctum')->deleteJson(route('posts.destroy', $this->post));
+
+    $response->assertForbidden();
+});
+
+test('Admin can delete any post',function (){
+    $user = User::factory()->create();
+    $user->assignRole('Admin');
+    $response = $this->actingAs($user,'sanctum')->deleteJson(route('posts.destroy', $this->post));
+
+    $response->assertNoContent();
+});
+
+test('Editor can delete any post',function (){
+    $user = User::factory()->create();
+    $user->assignRole('Editor');
+    $response = $this->actingAs($user,'sanctum')->deleteJson(route('posts.destroy', $this->post));
+
+    $response->assertNoContent();
+});

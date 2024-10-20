@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\LikeController;
@@ -37,4 +39,9 @@ Route::prefix('posts')->name('posts.')->group(function () {
             Route::delete('/{like}', 'destroy')->name('destroy')->middleware('auth:sanctum');
         });
     });
+});
+
+Route::prefix('admin')->name('admin.')->middleware('auth:sanctum')->group(function (){
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('posts', PostController::class);
 });

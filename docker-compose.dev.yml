@@ -38,7 +38,7 @@ services:
       MONGODB_REPLICA_SET_MODE: primary
       ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
-      - .:/bitnami/mongodb
+      - ./.infrastructure:/bitnami/mongodb
     networks:
       - development
   

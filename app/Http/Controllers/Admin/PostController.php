@@ -9,9 +9,21 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Gate;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class PostController extends Controller
 {
+    protected QueryBuilder $builder;
+
+    public function __construct()
+    {
+        $this->builder = QueryBuilder::for(Post::class)
+            ->allowedFilters([AllowedFilter::exact('category_id'),'user_id'])
+            ->allowedIncludes(['category', 'tags', 'likes', 'comments'])
+            ->allowedSorts(['created_at']);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -20,7 +32,7 @@ class PostController extends Controller
         // authorize
         Gate::authorize('viewAny', Post::class);
         // paginate posts
-        $posts = Post::paginate(20);
+        $posts = $this->builder->paginate();
         return PostResource::collection($posts);
     }
 
@@ -52,8 +64,10 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post): PostResource
+    public function show(string $post_id): PostResource
     {
+        // find the post
+        $post = $this->builder->findOrFail($post_id);
         // authorize
         Gate::authorize('view', $post);
         // fetch the post

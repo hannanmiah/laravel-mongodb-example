@@ -8,7 +8,7 @@ FROM serversideup/php:8.3-fpm-nginx-alpine AS base
 
 ## Uncomment if you need to install additional PHP extensions
 USER root
-RUN install-php-extensions gd imagick mongodb
+RUN install-php-extensions gd mongodb
 
 ############################################
 # Development Image

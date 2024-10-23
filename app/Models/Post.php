@@ -16,11 +16,12 @@ class Post extends Model
     /** @use HasFactory<\Database\Factories\PostFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'body', 'user_id', 'category_id'];
+    protected $fillable = ['title', 'body', 'user_id', 'category_id','published_at'];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'published_at' => 'datetime'
     ];
 
     public function user(): BelongsTo

@@ -23,6 +23,7 @@ class PostFactory extends Factory
             'body' => $this->faker->paragraph(5),
             'user_id' => User::factory(),
             'category_id' => Category::factory(),
+            'published_at' => now()
         ];
     }
 }

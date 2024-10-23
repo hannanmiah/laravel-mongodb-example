@@ -31,6 +31,7 @@ class PostResource extends JsonResource
             'comments' => $this->whenLoaded('comments'),
             'tags' => $this->whenLoaded('tags'),
             'likes' => $this->whenLoaded('likes'),
+            'published_at' => $this->whenHas('published_at')
         ];
     }
 }

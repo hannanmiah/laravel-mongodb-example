@@ -5,14 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Queries\Post\PublicPostQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
+    public function __construct(protected PublicPostQuery $postQuery)
+    {
+    }
+
     public function index()
     {
-        $posts = Post::paginate(10);
+        $posts = $this->postQuery->paginate();
         return PostResource::collection($posts);
     }
 
@@ -55,9 +60,9 @@ class PostController extends Controller
         return response()->json($post);
     }
 
-    public function show(Post $post)
+    public function show(string $post_id)
     {
-        $post->load('user');
+        $post = $this->postQuery->find($post_id);
         return PostResource::make($post);
     }
 

@@ -31,17 +31,41 @@ services:
       - "traefik.http.services.laravel.loadbalancer.server.port=8080"
       - "traefik.http.services.laravel.loadbalancer.server.scheme=http"
   mongodb:
-    image: bitnami/mongodb:latest
+    image: mongo:latest
+    hostname: mongo
+    restart: unless-stopped
+    command: --replSet rs0
     ports:
       - "27017:27017"
     environment:
-      MONGODB_REPLICA_SET_MODE: primary
-      ALLOW_EMPTY_PASSWORD: 'yes'
+      #MONGO_INITDB_ROOT_USERNAME: root
+      #MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: laravel
     volumes:
-      - ./.infrastructure:/bitnami/mongodb
+      - ./.infrastructure:/mongodb
     networks:
       - development
-  
+    healthcheck:
+      test: mongosh --eval 'db.runCommand("ping").ok' localhost:27017/test --quiet
+      interval: 2s
+      timeout: 3s
+      retries: 5
+  mongo-init:
+    image: mongo:latest
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    networks:
+      - development
+    command: >
+      sh -c "sleep 5; mongosh --host mongo:27017 --eval '
+      rs.initiate( {
+        _id : \"rs0\",
+        members: [
+          { _id: 0, host: \"mongo:27017\" }
+        ]
+      })
+      '"
   node:
     image: node:20
     volumes:
